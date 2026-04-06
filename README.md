@@ -66,3 +66,31 @@ To bridge the gap between SOC Operations and IT Auditing, I performed Root Cause
 By identifying the exact conditions causing the vulnerability, I can generate precise remediation tickets for IT teams. This ensures the organization maintains compliance with **ISO 27001 (Management of Technical Vulnerabilities)** and adheres to the Principle of Least Privilege (PoLP) and continuous patching policies.
 
 ![cve_detaylar](https://github.com/user-attachments/assets/0a443f0e-baee-4c97-a5f3-f9fa571c337b)
+
+---
+
+## 🎯 Case Study 3: Advanced Threat Hunting - Living Off The Land (LolBins)
+
+### 🚨 Objective
+Modern attackers often bypass traditional antivirus solutions by utilizing legitimate, pre-installed Windows binaries (LolBins) to execute malicious operations. This phase demonstrates the ability to simulate a "Living Off The Land" attack using `certutil.exe` and engineer custom SIEM rules to detect and alert on this evasive behavior.
+
+### 🔴 Phase 1: The Evasion Simulation (Red Team)
+I simulated an "Ingress Tool Transfer" attack by abusing the legitimate Windows Certificate Services tool (`certutil.exe`) to download a payload from an external server. 
+
+Initially, the Endpoint Protection Platform (Windows Defender) successfully intercepted the payload execution, demonstrating solid prevention mechanisms. However, in a real-world scenario where EPP is bypassed or disabled, we need deep visibility.
+
+![cmd_defender](https://github.com/user-attachments/assets/f9a77599-1e46-48c7-8636-06622026960d)
+
+### 🔍 Phase 2: Deep Telemetry with Sysmon
+To catch the evasive behavior, I configured Windows Sysmon to monitor detailed Process Creation (Event ID 1) telemetry. Even when using legitimate tools, the raw command-line arguments reveal the attacker's true intent.
+
+![event_properties](https://github.com/user-attachments/assets/8fd861f4-3fbf-42ec-8fa6-fe08b7b65824)
+
+### 🔵 Phase 3: Custom SIEM Engineering (Blue Team)
+Relying on raw logs is not scalable. I engineered a custom XML detection rule in the Wazuh Manager to automatically parse Sysmon logs and trigger a "Level 12 - Critical" alert whenever `certutil.exe` is executed with the `-urlcache` parameter. 
+
+This custom rule successfully mapped the behavior to the **MITRE ATT&CK Framework (T1105 & T1218)**, instantly translating raw telemetry into actionable Threat Intelligence.
+
+![log_rulelevel](https://github.com/user-attachments/assets/c964f228-61af-484f-af69-319bcba94273)
+
+![command_line](https://github.com/user-attachments/assets/e4b25133-ecce-4111-b25c-8d9cc87fc006)
