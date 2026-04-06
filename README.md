@@ -39,3 +39,30 @@ The attack was monitored in a lab environment to validate alert triggers:
   </mitre>
 </rule>
 ```
+---
+
+---
+
+## 🛡️ Case Study 2: Proactive Vulnerability Management & GRC Alignment
+
+### 🚨 Objective
+Moving beyond reactive threat monitoring, this phase establishes an automated Vulnerability Management pipeline using Wazuh. The goal is to identify underlying weaknesses (like the ones exploited in Phase 1) before attackers do, and translate technical CVEs into actionable GRC (Governance, Risk, and Compliance) reports for audit readiness (e.g., ISO 27001: A.12.6.1).
+
+### 🔍 Phase 1: Automated Asset & Vulnerability Discovery
+I configured and activated Wazuh's native `<vulnerability-detection>` module to perform continuous, agent-based scanning. The SIEM automatically synchronized with the National Vulnerability Database (NVD) to audit the endpoint's OS and installed applications, providing a comprehensive risk posture overview.
+
+![vul_dashboard](https://github.com/user-attachments/assets/90671c41-3567-482d-9fb9-dfd1bffd0d55)
+
+### 🔴 Phase 2: Threat Triage & Risk Scoring
+Instead of relying solely on automated patching, I manually triaged the discovered vulnerabilities. I specifically prioritized flaws with a **CVSS Score of 9.8 (Critical)**, indicating a high likelihood of exploitation (such as Remote Code Execution or privilege escalation vectors similar to the PrintSpoofer exploit).
+
+![cve](https://github.com/user-attachments/assets/a2b3fdcf-5ce9-4243-9ffb-55622a90ab5c)
+
+![cve_skore](https://github.com/user-attachments/assets/7485523e-6175-434d-813a-83ff378b1774)
+
+### 📋 Phase 3: Root Cause Analysis & GRC Bridge
+To bridge the gap between SOC Operations and IT Auditing, I performed Root Cause Analysis (RCA) on the critical CVEs to pinpoint the exact failing assets (e.g., outdated software versions or missing security rollups). 
+
+By identifying the exact conditions causing the vulnerability, I can generate precise remediation tickets for IT teams. This ensures the organization maintains compliance with **ISO 27001 (Management of Technical Vulnerabilities)** and adheres to the Principle of Least Privilege (PoLP) and continuous patching policies.
+
+![cve_detaylar](https://github.com/user-attachments/assets/0a443f0e-baee-4c97-a5f3-f9fa571c337b)
