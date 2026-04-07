@@ -115,3 +115,25 @@ When the SIEM caught the Sysmon Event ID 1 telemetry containing the exfiltration
 ![rule_100052](https://github.com/user-attachments/assets/d4cc34da-a7b0-4013-85dc-b05e8312cfd4)
 
 This automated tagging drastically reduces incident response time and provides immediate, audit-ready context for C-Level executives and compliance teams.
+
+---
+
+## 🛑 Case Study 5: The Final Evolution - Automated Active Response (Level 15)
+
+### 🚨 Objective
+Detecting a breach is critical, but stopping it in real-time is the ultimate goal of a mature SOC. In this phase, I upgraded the SIEM from a "Passive Monitoring" state to an "Active Containment" state. The objective was to configure the Wazuh Manager to automatically neutralize the threat the moment sensitive data exfiltration is detected.
+
+### ⚙️ Phase 1: Engineering the Response Logic
+To achieve autonomous defense, I escalated the custom Data Exfiltration rule (`100052`) to **Level 15** (Severe Attack/System Compromise) - the highest severity level in Wazuh. 
+
+Next, I modified the Wazuh Manager's core configuration (`ossec.conf`) to link this specific rule to the **Active Response** module. I defined a `<command>` block for `firewall-drop`, instructing the SIEM to immediately block the attacker's communication channel via the local firewall for a specified timeout period without waiting for human intervention.
+
+### 💥 Phase 2: Execution and Autonomous Containment
+I re-executed the PowerShell exfiltration payload targeting the Kali Linux C2 listener. 
+
+While the payload successfully reached the C2 server network (logged as an HTTP 501 error on the listener due to protocol mismatch), the SIEM's reaction was instantaneous. The event triggered the Level 15 Severe Attack alert. More importantly, the alert was automatically tagged with the `active_response` group, confirming that the automated containment protocol was successfully initiated alongside the GRC compliance tags.
+
+![rule_level15](https://github.com/user-attachments/assets/ced40ca3-b043-424d-9ebb-9bd93bc206d1)
+
+### 📊 Business Value
+By integrating **Active Response** with **GRC Tagging**, this pipeline eliminates the critical "dwell time" between detection and mitigation. It ensures that the moment regulatory boundaries (GDPR/ISO27001) are threatened, the system autonomously defends itself while generating an audit-ready report for C-Level executives.
