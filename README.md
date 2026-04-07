@@ -94,3 +94,24 @@ This custom rule successfully mapped the behavior to the **MITRE ATT&CK Framewor
 ![log_rulelevel](https://github.com/user-attachments/assets/c964f228-61af-484f-af69-319bcba94273)
 
 ![command_line](https://github.com/user-attachments/assets/e4b25133-ecce-4111-b25c-8d9cc87fc006)
+
+---
+
+## ☢️ Case Study 4: Automated SOC-to-Compliance Pipeline (Data Exfiltration)
+
+### 🚨 Objective
+Modern cybersecurity requires bridging the gap between technical SOC operations and Governance, Risk, and Compliance (GRC). This phase demonstrates how to detect a critical Data Exfiltration attempt and automatically map the incident to global regulatory frameworks (KVKK, GDPR, PCI-DSS, ISO 27001) in real-time.
+
+### 🔴 Phase 1: The Exfiltration Simulation (Red Team)
+To simulate a real-world breach, I established a Command and Control (C2) listener on a Kali Linux instance. Using a "Living off the Land" technique, I executed a PowerShell payload (`Invoke-WebRequest`) on the Windows endpoint to exfiltrate highly sensitive, simulated customer financial data (`credit_cards.txt`) directly to the C2 server.
+
+### 🔵 Phase 2: GRC-Enriched Threat Detection (Blue Team)
+Detecting the breach is only half the battle; reporting its business impact is the other. I engineered a highly specific, regex-powered XML rule in the Wazuh SIEM. 
+
+When the SIEM caught the Sysmon Event ID 1 telemetry containing the exfiltration command, it didn't just trigger a Level 13 Critical Alert. The custom rule automatically tagged the alert with the specific compliance frameworks violated by this data leak: **GDPR, KVKK, PCI-DSS, and ISO 27001**. 
+
+![command_line1](https://github.com/user-attachments/assets/eb0433b2-4886-4ca4-87e9-3a332ebbb878)
+
+![rule_100052](https://github.com/user-attachments/assets/d4cc34da-a7b0-4013-85dc-b05e8312cfd4)
+
+This automated tagging drastically reduces incident response time and provides immediate, audit-ready context for C-Level executives and compliance teams.
