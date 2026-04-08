@@ -118,7 +118,7 @@ This automated tagging drastically reduces incident response time and provides i
 
 ---
 
-## 🛑 Case Study 5: The Final Evolution - Automated Active Response (Level 15)
+## 🛑 Case Study 5: Automated Active Response (Level 15 Containment)
 
 ### 🚨 Objective
 Detecting a breach is critical, but stopping it in real-time is the ultimate goal of a mature SOC. In this phase, I upgraded the SIEM from a "Passive Monitoring" state to an "Active Containment" state. The objective was to configure the Wazuh Manager to automatically neutralize the threat the moment sensitive data exfiltration is detected.
@@ -137,3 +137,31 @@ While the payload successfully reached the C2 server network (logged as an HTTP 
 
 ### 📊 Business Value
 By integrating **Active Response** with **GRC Tagging**, this pipeline eliminates the critical "dwell time" between detection and mitigation. It ensures that the moment regulatory boundaries (GDPR/ISO27001) are threatened, the system autonomously defends itself while generating an audit-ready report for C-Level executives.
+
+---
+
+## 🕵️‍♂️ Case Study 6: Threat Hunting & Credential Dumping (SAM Hive Extraction)
+
+### 🚨 Objective
+Credential access is a critical phase in any cyberattack lifecycle. In the financial sector, preventing Identity Theft and Credential Dumping is heavily mandated by frameworks like PCI-DSS and ISO 27001. This phase focuses on hunting local password extraction attempts and mapping them directly to the MITRE ATT&CK framework.
+
+### ⚔️ Phase 1: EDR Collision & Tactical Pivot (Red Team)
+Initially, I attempted to dump the `lsass.exe` process memory using standard Living-off-the-Land binaries (Task Manager / ProcDump). However, the local EDR (Windows Defender) successfully intercepted and terminated the memory access attempt (`Behavior:Win32/DumpLsass.C!attk`). 
+
+Adapting to the EDR block, I pivoted to an alternative credential theft technique: extracting the local SAM (Security Account Manager) registry hive via `reg.exe`. This offline attack often bypasses memory-scanning EDRs. I executed: `reg.exe save hklm\sam C:\sam_backup.hive`
+
+### 🛡️ Phase 2: Detection Engineering (Blue Team)
+To catch this specific registry-based extraction, I engineered a highly targeted Level 14 rule (`100053`) in the Wazuh SIEM. The rule parses Sysmon Event ID 1 (Process Creation) and triggers immediately upon detecting interaction with the `hklm\sam` path.
+
+### 💥 Phase 3: Execution and GRC Mapping
+The moment the Red Team executed the SAM hive dump, the SIEM caught the telemetry. 
+
+![sam_backup](https://github.com/user-attachments/assets/c7c4db51-b3ab-4fbe-b207-8be6c542c727)
+
+The detection was not just a technical alert. The custom rule automatically enriched the log with critical business context:
+* **MITRE ATT&CK Mapping:** Tagged as **T1003** (OS Credential Dumping).
+* **Compliance Tags:** Automatically flagged as a **PCI-DSS** and **ISO 27001** identity theft violation.
+
+![rule_sam](https://github.com/user-attachments/assets/b9c13419-394e-4666-835e-aec33f98f205)
+
+This demonstrates a proactive Threat Hunting approach, ensuring that even when attackers bypass standard EDR controls using alternative techniques, the SIEM acts as the ultimate safety net.
